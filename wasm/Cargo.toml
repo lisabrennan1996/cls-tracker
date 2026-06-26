@@ -20,7 +20,7 @@ serde                 = { version = "1", features = ["derive"] }
 serde_json            = "1"
 serde-wasm-bindgen    = "0.6"
 console_error_panic_hook = { version = "0.1", optional = true }
-lopdf                 = { version = "0.34", default-features = false, features = ["pom_parser"] }
+lopdf                 = { version = "=0.33.0", default-features = false, features = ["pom_parser"] }
 
 [profile.release]
 opt-level = "z"
