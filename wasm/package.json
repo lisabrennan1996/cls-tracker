@@ -1,0 +1,7 @@
+{
+  "name": "liteparse-wasm",
+  "private": true,
+  "scripts": {
+    "build": "wasm-pack build --target web --out-dir ../public/pkg --out-name liteparse_wasm --release"
+  }
+}

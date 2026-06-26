@@ -1,0 +1,11 @@
+# Cloudflare Pages build config
+# Settings → Build & deployments:
+#   Build command:    bash build-cf.sh
+#   Build output dir: public
+#   Node version:     18
+
+name = "cls-tracker"
+
+[build]
+command   = "bash build-cf.sh"
+destination = "public"

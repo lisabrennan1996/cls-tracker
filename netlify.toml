@@ -1,0 +1,15 @@
+# Netlify build config
+# Connect this repo at app.netlify.com → New site → Import from Git
+# No extra env vars needed.
+
+[build]
+  publish = "public"
+  command = """
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable --target wasm32-unknown-unknown && \
+    source $HOME/.cargo/env && \
+    curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh && \
+    cd wasm && wasm-pack build --target web --out-dir ../public/pkg --out-name liteparse_wasm --release
+  """
+
+[build.environment]
+  RUST_LOG = "error"
