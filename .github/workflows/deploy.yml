@@ -22,13 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ── Rust + wasm toolchain ─────────────────────────────────────────────
+      # ── Rust + wasm ───────────────────────────────────────────────────
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
 
-      - name: Cache Rust build artefacts
+      - name: Cache Rust
         uses: actions/cache@v4
         with:
           path: |
@@ -41,29 +41,44 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      # ── Compile Rust → wasm ───────────────────────────────────────────────
       - name: Build wasm
         working-directory: wasm
         run: |
           wasm-pack build \
             --target web \
-            --out-dir ../public/pkg \
+            --out-dir ../src/wasm/pkg \
             --out-name liteparse_wasm \
             --release
 
-      # ── Upload the whole public/ folder as the Pages artefact ────────────
+      # ── Node / Vite ───────────────────────────────────────────────────
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: Build Vite app
+        run: npm run build
+        env:
+          # Set to /<repo-name>/ for project Pages sites.
+          # For a custom domain or user/org site (username.github.io) set to /
+          VITE_BASE: /${{ github.event.repository.name }}/
+
+      # ── Deploy ────────────────────────────────────────────────────────
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload Pages artefact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    # Only deploy on pushes to main (not on PRs)
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     environment:
       name: github-pages
