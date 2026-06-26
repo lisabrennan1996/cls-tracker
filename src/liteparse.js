@@ -7,7 +7,7 @@ let _initPromise = null
 
 export function getLiteparseReady() {
   if (_initPromise) return _initPromise
-  _initPromise = import('../wasm/pkg/liteparse_wasm.js')
+  _initPromise = import('./wasm/pkg/liteparse_wasm.js')
     .then(async ({ default: init, LiteParse }) => {
       await init()
       _LiteParse = LiteParse
