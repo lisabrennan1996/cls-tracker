@@ -146,10 +146,10 @@ pub fn extract_pages(
 
         // Process content stream(s)
         let contents = collect_content_streams(doc, &page_dict);
-        process_streams(doc, &contents, &font_map, *page_idx_1based, &mut pc);
+        process_streams(doc, &contents, &font_map, page_idx_1based, &mut pc);
 
         // Harvest link annotations
-        harvest_links(doc, &page_dict, *page_idx_1based, &mut pc);
+        harvest_links(doc, &page_dict, page_idx_1based, &mut pc);
 
         pages.push(pc);
     }
