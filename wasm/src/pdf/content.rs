@@ -120,9 +120,10 @@ pub fn extract_pages(
     let total = page_ids.len();
     let mut pages: Vec<PageContent> = Vec::new();
 
-    for (page_idx_1based, &obj_id) in page_ids.iter().take(max_pages) {
+    for (page_num_u32, &obj_id) in page_ids.iter().take(max_pages) {
+        let page_idx_1based: usize = *page_num_u32 as usize;
         if let Some(tp) = target_pages {
-            if !tp.contains(page_idx_1based) {
+            if !tp.contains(&page_idx_1based) {
                 continue;
             }
         }
@@ -548,7 +549,10 @@ fn harvest_links(doc: &Document, page_dict: &Dictionary, page_number: usize, pc:
                 Object::Dictionary(d) => Some(d.clone()),
                 _ => None,
             })
-            .and_then(|action| action.get(b"URI").ok().and_then(|o| o.as_str().ok().map(|s| s.to_owned())));
+            .and_then(|action| action.get(b"URI").ok().and_then(|o| {
+                // lopdf 0.33: as_str() returns Result<Vec<u8>>
+                o.as_str().ok().map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+            }));
 
         let uri = match uri { Some(u) => u, None => continue };
 
